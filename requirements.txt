@@ -1,0 +1,6 @@
+python-dotenv
+aiogram
+tensorflow
+pandas
+scikit-learn
+emoji
