@@ -244,6 +244,7 @@ async def handle_false_positive(callback: CallbackQuery):
 
 
 # Обработка бана пользователя
+# Обработка бана пользователя
 @dp.callback_query(F.data.startswith("ban:"))
 async def handle_ban(callback: CallbackQuery):
     message_id = int(callback.data.split(':')[1])
@@ -253,11 +254,17 @@ async def handle_ban(callback: CallbackQuery):
 
     original_msg, log_msg, reason = data
     try:
+        # Формируем упоминание модератора
+        moderator_mention = (
+            f"<a href='tg://user?id={callback.from_user.id}'>"
+            f"{escape(callback.from_user.full_name)}</a>"
+        )
+
         await bot.ban_chat_member(original_msg.chat.id, original_msg.from_user.id)
         await log_msg.edit_text(
-            f"🚫 Пользователь <b>{original_msg.from_user.full_name}</b> заблокирован\n"
-            f"👮‍♂️ Модератор: {callback.from_user.mention}\n"
-            f"📝 Причина: {reason}"
+            f"🚫 Пользователь <b>{escape(original_msg.from_user.full_name)}</b> заблокирован\n"
+            f"👮‍♂️ Модератор: {moderator_mention}\n"
+            f"📝 Причина: {escape(reason)}"
         )
         await callback.answer("Пользователь заблокирован")
     except TelegramForbiddenError:
